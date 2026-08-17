@@ -1,4 +1,10 @@
-replicaCount: 3
+#replicaCount: 3
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 50
 
 appConfig:
   greeting: "Welcome to the Production System"
