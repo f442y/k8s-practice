@@ -31,13 +31,11 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-
-          # 1. Pull in all variables from our ConfigMap
           envFrom:
             - configMapRef:
                 name: {{ include "my-app-chart.fullname" . }}-config
-
-          # 2. Write the environment variable to the web page before starting Nginx
+            - secretRef:
+                name: app-db-secret
           command: [ "/bin/sh", "-c" ]
           args:
             - |
@@ -45,8 +43,9 @@ spec:
               <body style='font-family: sans-serif; padding: 2rem;'>
                 <h1>$APP_GREETING</h1>
                 <p><strong>Environment:</strong> $APP_ENVIRONMENT</p>
+                <p><strong>Database Password (Decrypted):</strong> <code style='background: #fee; color: #b00; padding: 2px 6px;'>$DB_PASSWORD</code></p>
                 <hr/>
-                <p><strong>Served by Pod:</strong> <code style='background: #eee; padding: 2px 6px; font-size: 1.1em;'>$(hostname)</code></p>
+                <p><strong>Served by Pod:</strong> <code>$(hostname)</code></p>
               </body>
               </html>" > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'
           ports:
