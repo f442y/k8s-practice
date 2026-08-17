@@ -80,3 +80,7 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+appConfig:
+  greeting: "Hello from ArgoCD GitOps!"
+  environment: "development"

@@ -29,24 +29,22 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          # 1. Pull in all variables from our ConfigMap
+          envFrom:
+            - configMapRef:
+                name: {{ include "my-app-chart.fullname" . }}-config
+
+          # 2. Write the environment variable to the web page before starting Nginx
+          command: [ "/bin/sh", "-c" ]
+          args: [ "echo \"<h1>$APP_GREETING</h1><p>Environment: $APP_ENVIRONMENT</p>\" > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'" ]
+
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
