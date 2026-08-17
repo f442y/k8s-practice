@@ -1,0 +1,14 @@
+replicaCount: 3
+
+appConfig:
+  greeting: "Welcome to the Production System"
+  environment: "production"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: prod.app.192.168.1.53.sslip.io
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+

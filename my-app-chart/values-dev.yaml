@@ -1,0 +1,13 @@
+replicaCount: 1
+
+appConfig:
+  greeting: "Welcome to the Development Sandbox"
+  environment: "development"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: dev.app.192.168.1.53.sslip.io
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
