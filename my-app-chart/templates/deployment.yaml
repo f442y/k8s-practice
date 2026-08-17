@@ -39,8 +39,16 @@ spec:
 
           # 2. Write the environment variable to the web page before starting Nginx
           command: [ "/bin/sh", "-c" ]
-          args: [ "echo \"<h1>$APP_GREETING</h1><p>Environment: $APP_ENVIRONMENT</p>\" > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'" ]
-
+          args:
+            - |
+              echo "<html>
+              <body style='font-family: sans-serif; padding: 2rem;'>
+                <h1>$APP_GREETING</h1>
+                <p><strong>Environment:</strong> $APP_ENVIRONMENT</p>
+                <hr/>
+                <p><strong>Served by Pod:</strong> <code style='background: #eee; padding: 2px 6px; font-size: 1.1em;'>$(hostname)</code></p>
+              </body>
+              </html>" > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
